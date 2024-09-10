@@ -1,0 +1,59 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.1'
+	id 'io.spring.dependency-management' version '1.1.5'
+}
+
+group = 'com.inventory'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	// Spring Boot Starter for JPA (Data Access)
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+	// Spring Boot Starter for Security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	// Spring Boot Starter for Thymeleaf (View Layer)
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+	// Spring Boot Starter for Web (MVC)
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// Thymeleaf Extras for Spring Security integration
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+
+	// Jakarta Validation API
+	implementation 'jakarta.validation:jakarta.validation-api:3.0.0'
+
+	// MySQL Connector (Runtime Dependency)
+	runtimeOnly 'com.mysql:mysql-connector-j'
+
+	// ModelMapper for Object Mapping
+	implementation 'org.modelmapper:modelmapper:3.1.0'
+
+	// Spring Security Crypto for Password Encoding
+	implementation 'org.springframework.security:spring-security-crypto:5.7.1'
+
+	// OpenCSV for handling CSV files
+	//implementation 'com.opencsv:opencsv:5.5.2'
+	implementation 'com.opencsv:opencsv:5.6'
+	// Test Dependencies
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

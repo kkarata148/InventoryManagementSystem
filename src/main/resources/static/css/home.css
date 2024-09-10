@@ -1,0 +1,102 @@
+body {
+    font-family: Arial, sans-serif;
+    background: url('/images/background_2.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar {
+    display: flex;
+    justify-content: flex-start; /* Align items to the start */
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 16px 32px;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.navbar .title {
+    font-size: 24px;
+    color: #fff;
+    margin-right: 2000px; /* Space between title and links */
+}
+
+.navbar .links {
+    display: flex;
+}
+
+.navbar .links a {
+    color: #fff;
+    margin-right: 16px; /* Space between links */
+    text-decoration: none;
+    font-size: 18px;
+}
+
+.navbar .links a:last-child {
+    margin-right: 0; /* No margin after the last link */
+}
+
+.navbar .links a.active {
+    text-decoration: underline;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 100px auto 0;
+    padding: 32px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-message h1 {
+    margin: 0 0 32px;
+}
+
+.quick-actions {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 32px;
+}
+
+.quick-actions button {
+    padding: 16px 32px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007BFF;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.quick-actions button:hover {
+    background-color: #0056b3;
+}
+
+.statistics {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.statistics .statistic {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.statistics .statistic i {
+    font-size: 32px;
+    margin-right: 8px;
+}
+
+.statistics .statistic p {
+    margin: 0;
+    font-size: 20px;
+}

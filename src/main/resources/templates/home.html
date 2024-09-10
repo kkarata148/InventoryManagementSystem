@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Inventory Management</title>
+    <link rel="stylesheet" href="/css/home.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+<div class="navbar">
+    <div class="title">Inventory Management</div>
+    <div class="links">
+        <a th:href="@{/}" class="active">Home</a>
+        <a th:href="@{/products/list}">Inventory</a>
+        <a th:href="@{/statistics}">Reports</a>
+        <a th:href="@{/racks/visualization}">Rack Visualization</a>
+        <a th:href="@{/racks/add}">Add Rack</a>
+        <a th:href="@{/user-management}">User Management</a>
+        <a th:href="@{/logout}">Logout</a>
+    </div>
+</div>
+<div class="container">
+    <div class="welcome-message">
+        <h1>Welcome, <span th:text="${#authentication.name}">User</span>!</h1>
+    </div>
+    <div class="quick-actions">
+        <button th:onclick="|window.location.href='@{/products/add}'|">Add New Item</button>
+        <button th:onclick="|window.location.href='@{/statistics}'|">View Reports</button>
+        <button th:onclick="|window.location.href='@{/products/list}'|">View Inventory</button>
+</div>
+</body>
+</html>

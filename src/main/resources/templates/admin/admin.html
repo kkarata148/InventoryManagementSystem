@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<nav>
+    <ul>
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/admin/users}">Manage Users</a></li>
+    </ul>
+</nav>
+<div>
+    <h1>Welcome to the Admin Panel</h1>
+    <p>Use the navigation to manage users and roles.</p>
+</div>
+</body>
+</html>

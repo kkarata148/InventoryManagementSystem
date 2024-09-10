@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Statistics</title>
+    <link rel="stylesheet" href="/css/statistics.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js for graphs -->
+    <script src="/js/statistics.js"></script>
+</head>
+<body>
+
+<h1>Inventory Statistics</h1>
+
+<div class="statistics-container">
+    <div class="section">
+        <h2>Rack Information</h2>
+        <table class="rack-table">
+            <thead>
+            <tr>
+                <th>Rack Name</th>
+                <th>Total Capacity</th>
+                <th>Used Capacity</th>
+                <th>Available Capacity</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Thymeleaf template to loop through racks and display their stats -->
+            <tr th:each="rack : ${racks}">
+                <td th:text="${rack.name}"></td>
+                <td th:text="${rack.totalCapacity}"></td>
+                <td th:text="${rack.usedCapacity}"></td>
+                <td th:text="${rack.totalCapacity - rack.usedCapacity}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Product Statistics</h2>
+        <p>Total Products in the System: <span id="totalProducts" th:text="${totalProducts}"></span></p>
+        <p>Total Products Sold: <span id="totalSold" th:text="${totalSold}"></span></p>
+
+        <!-- Chart for products vs sold products -->
+        <canvas id="productChart" width="400" height="400"></canvas>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchStatistics();
+    });
+
+    function fetchStatistics() {
+        fetch('/statistics/json')
+            .then(response => response.json())
+            .then(data => {
+                // Update textual statistics
+                document.getElementById('totalProducts').textContent = data.totalProducts;
+                document.getElementById('totalSold').textContent = data.totalSold;
+
+                // Create a pie chart with the data
+                const ctx = document.getElementById('productChart').getContext('2d');
+                const chart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Total Products', 'Total Sold'],
+                        datasets: [{
+                            data: [data.totalProducts, data.totalSold],
+                            backgroundColor: ['#36A2EB', '#FF6384'],
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Product Distribution'
+                            }
+                        }
+                    }
+                });
+            });
+    }
+</script>
+
+</body>
+</html>

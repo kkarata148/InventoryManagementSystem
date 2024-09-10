@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Current Order</title>
+    <link rel="stylesheet" href="/css/order.css">
+</head>
+<body>
+<div class="container">
+    <h1>Current Order</h1>
+    <div th:if="${order != null}">
+        <p><strong>Order ID:</strong> <span th:text="${order.id}"></span></p>
+        <p><strong>Company:</strong> <span th:text="${order.company}"></span></p>
+        <p><strong>Date:</strong> <span th:text="${order.orderDate}"></span></p>
+
+        <h2>Order Items</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${order.items}">
+                <td th:text="${item.product.name}"></td>
+                <td>
+                    <input type="number" th:value="${item.quantity}" min="1" th:data-item-id="${item.id}"
+                           onchange="updateQuantity(this)">
+                </td>
+                <td th:text="${item.product.price}"></td>
+                <td th:text="${item.product.price * item.quantity}"></td>
+                <td>
+                    <button type="button" th:onclick="'removeItem(' + ${item.id} + ')'">Remove</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!-- Finalize Order Button -->
+        <button type="button" class="btn btn-primary" th:onclick="'finalizeOrder(' + ${order.id} + ')'">Finalize Order</button>
+
+    </div>
+    <div th:if="${order == null}">
+        <p>No active order found.</p>
+    </div>
+</div>
+
+<script>
+    function finalizeOrder(orderId) {
+        fetch(`/order/${orderId}/finalize`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to finalize order.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.error) {
+                throw new Error(data.error);
+            } else {
+                alert('Order finalized successfully.');
+                window.location.href = '/products/sold-products';
+            }
+        })
+        .catch(error => {
+            console.error('Failed to finalize order:', error);
+            alert('Failed to finalize order. Please try again.');
+        });
+    }
+
+    function updateQuantity(element) {
+    const itemId = element.getAttribute('data-item-id');
+    const newQuantity = element.value;
+
+    fetch(`/order/item/${itemId}/update-quantity`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `quantity=${newQuantity}`
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to update quantity.');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.error) {
+            throw new Error(data.error);
+        }
+        alert('Quantity updated successfully.');
+        location.reload(); // Reload the page to update totals
+    })
+    .catch(error => {
+        console.error('Failed to update quantity:', error);
+        alert('Failed to update quantity. Please try again.');
+    });
+}
+
+
+function removeItem(itemId) {
+    if (!confirm('Are you sure you want to remove this item from the order?')) {
+        return;
+    }
+
+    fetch(`/order/item/${itemId}/remove`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to remove item.');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.error) {
+            throw new Error(data.error);
+        }
+        alert('Item removed successfully.');
+        location.reload(); // Reload the page to update the order items
+    })
+    .catch(error => {
+        console.error('Failed to remove item:', error);
+        alert('Failed to remove item. Please try again.');
+    });
+}
+
+
+</script>
+
+</body>
+</html>

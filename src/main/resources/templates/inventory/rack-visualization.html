@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rack Visualization</title>
+    <link rel="stylesheet" href="/css/racks.css">
+</head>
+<body>
+
+<h1>Rack Visualization</h1>
+
+<div class="rack-container">
+    <div class="rack" th:each="rack : ${racks}">
+        <h2 th:text="${rack.name}">Rack Name</h2>
+        <ul class="product-list">
+            <li th:each="product : ${rack.products}">
+                <div class="product-details">
+                    <strong>Product Name:</strong> <span th:text="${product.name}">Product Name</span><br>
+                    <strong>SKU:</strong> <span th:text="${product.sku}">Product SKU</span><br>
+                    <strong>Quantity:</strong> <span th:text="${product.quantity}">Quantity</span><br>
+                    <strong>Position:</strong> <span th:text="${product.rackPosition}">Position on Rack</span>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+</body>
+</html>

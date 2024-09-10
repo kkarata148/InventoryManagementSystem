@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Sold Products</title>
+    <link rel="stylesheet" href="/css/inventory.css">
+</head>
+<body>
+<div class="navbar">
+    <div class="title">Inventory Management</div>
+    <div class="links">
+        <a th:href="@{/products/list}">Inventory</a>
+        <a th:href="@{/products/add}">Add Product</a>
+        <a th:href="@{/products/sold-products}" class="active">Sold Products</a>
+        <a th:href="@{/logout}">Logout</a>
+    </div>
+</div>
+<div class="container">
+    <h1>Sold Products</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>SKU</th>
+            <th>Name</th>
+            <th>Sold Date</th>
+            <th>Quantity Sold</th>
+            <th>Company/Customer</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${soldProducts}">
+            <td th:text="${item.product.sku}"></td>
+            <td th:text="${item.product.name}"></td>
+            <td th:text="${item.order.orderDate}"></td>
+            <td th:text="${item.quantity}"></td>
+            <td th:text="${item.order.company}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

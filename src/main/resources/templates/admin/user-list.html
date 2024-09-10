@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User List</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<nav>
+    <ul>
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/admin}">Admin Panel</a></li>
+    </ul>
+</nav>
+<div>
+    <h1>User List</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Roles</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.id}">1</td>
+            <td th:text="${user.username}">username</td>
+            <td th:text="${user.email}">email@example.com</td>
+            <td>
+                <ul>
+                    <li th:each="role : ${user.roles}" th:text="${role.name}">ROLE_USER</li>
+                </ul>
+            </td>
+            <td>
+                <a th:href="@{/admin/users/{id}/roles(id=${user.id})}">Edit Roles</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

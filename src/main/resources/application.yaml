@@ -1,0 +1,51 @@
+spring:
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: 'TRUE'
+    hibernate:
+      ddl-auto: update
+    open-in-view: 'false'
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: 'true'
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    password: Krasi148!
+    username: root
+    url: jdbc:mysql://localhost:3306/inventory_management?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true&serverTimezone=UTC
+  thymeleaf: # Thymeleaf
+    cache: false
+    mode: HTML
+    encoding: UTF-8
+    prefix: file:src/main/resources/templates/
+  web:
+    resources:
+      cache:
+        period: 0
+      static-locations: file:src/main/resources/static/
+  security:
+    user:
+      name: user
+      password: password
+logging:
+  file:
+    name: logs/spring-boot-application.log
+  level:
+    root: INFO
+    org:
+      org.hibernate.SQL: TRACE
+      org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+      springframework:
+        security: DEBUG
+      hibernate:
+        type:
+          descriptor: TRACE
+        SQL: DEBUG
+      nodeValue: WARN
+    blog: WARN
+
+server:
+  port: 8080
