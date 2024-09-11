@@ -1,14 +1,8 @@
 package com.inventory.service.impl;
 
-import com.inventory.model.Category;
-import com.inventory.model.Product;
-import com.inventory.model.SoldProduct;
-import com.inventory.model.Rack;
+import com.inventory.model.*;
 import com.inventory.model.dto.ProductDTO;
-import com.inventory.repository.CategoryRepository;
-import com.inventory.repository.ProductRepository;
-import com.inventory.repository.SoldProductRepository;
-import com.inventory.repository.RackRepository;
+import com.inventory.repository.*;
 import com.inventory.service.ProductService;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
@@ -18,7 +12,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.hibernate.Hibernate;
+
+import java.util.ArrayList;
 import java.util.Optional;
 
 import java.util.Arrays;
@@ -26,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -35,14 +29,16 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryRepository categoryRepository;
     private final SoldProductRepository soldProductRepository;
     private final RackRepository rackRepository;
+    private final ProductRackRepository productRackRepository;
 
     @Autowired
     public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository,
-                              SoldProductRepository soldProductRepository, RackRepository rackRepository) {
+                              SoldProductRepository soldProductRepository, RackRepository rackRepository, ProductRackRepository productRackRepository) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.soldProductRepository = soldProductRepository;
         this.rackRepository = rackRepository;
+        this.productRackRepository = productRackRepository;
     }
 
     @Transactional
@@ -102,7 +98,7 @@ public class ProductServiceImpl implements ProductService {
                     productDTO.setPrice(Double.parseDouble(line[5]));
                     productDTO.setStatus(line[6]);
 
-                    Product product = addProduct(productDTO);
+                    Product product = this.addProduct(productDTO);
                     System.out.println("Saved Product: " + product.getName() + " with SKU: " + product.getSku());
                 } catch (Exception e) {
                     System.out.println("Error processing line: " + Arrays.toString(line));
@@ -194,19 +190,31 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public void addProductToRack(Product product) {
-        List<Rack> racks = rackRepository.findAllWithProducts(); // Fetches racks with products eagerly
-
+        List<Rack> racks = rackRepository.findAll(); // Fetches racks with products eagerly
+        List<ProductRack> productRacks = new ArrayList<>();
         for (Rack rack : racks) {
             if (rack.hasSpace()) {
-                product.setRack(rack);
-                product.setRackPosition(rack.getUsedCapacity() + 1); // Assign to the next available slot
-                rack.assignProduct(product);
+                int currentSpace = rack.getTotalCapacity() - rack.getUsedCapacity();
+                if (currentSpace >= product.getQuantity()) {
+                    productRacks.add(handleRackProduct(rack, product));
+                    break;
+                }else {
 
-                rackRepository.save(rack); // Update rack capacity
-                break;
+                }
+
             }
         }
+        this.productRepository.save(product);
+        this.productRackRepository.saveAll(productRacks);
     }
+
+    private ProductRack handleRackProduct(Rack rack, Product product) {
+        ProductRack productRack = new ProductRack(product, rack, rack.getUsedCapacity() + 1, rack.getUsedCapacity() + product.getQuantity());
+        rack.setUsedCapacity(rack.getUsedCapacity() + product.getQuantity());
+        this.rackRepository.save(rack);
+        return productRack;
+    }
+
     public class DuplicateSKUException extends RuntimeException {
         public DuplicateSKUException(String message) {
             super(message);

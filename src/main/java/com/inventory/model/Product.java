@@ -2,6 +2,10 @@ package com.inventory.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 @Entity
 @Table(name = "products")
 public class Product {
@@ -33,12 +37,8 @@ public class Product {
     private double price;
 
     // Fields for Rack and Position in Rack
-    @ManyToOne
-    @JoinColumn(name = "rack_id", nullable = true)
-    private Rack rack;
-
-    @Column(nullable = true)
-    private Integer rackPosition;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductRack> productRacks = new ArrayList<>();
 
     // Getters and Setters
     public Long getId() {
@@ -105,37 +105,13 @@ public class Product {
         this.price = price;
     }
 
-    public Rack getRack() {
-        return rack;
+    public List<ProductRack> getProductRacks() {
+        return productRacks;
     }
 
-    public void setRack(Rack rack) {
-        this.rack = rack;
-    }
-
-    public Integer getRackPosition() {
-        return rackPosition;
-    }
-
-    public void setRackPosition(Integer rackPosition) {
-        this.rackPosition = rackPosition;
+    public void setProductRacks(List<ProductRack> productRacks) {
+        this.productRacks = productRacks;
     }
 
     // Override methods like equals, hashCode, and toString as needed
-
-    @Override
-    public String toString() {
-        return "Product{" +
-                "id=" + id +
-                ", sku='" + sku + '\'' +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", quantity=" + quantity +
-                ", status='" + status + '\'' +
-                ", category=" + category.getName() +  // Assuming Category has getName()
-                ", price=" + price +
-                ", rack=" + (rack != null ? rack.getName() : "No Rack") +
-                ", rackPosition=" + (rackPosition != null ? rackPosition : "No Position") +
-                '}';
-    }
 }

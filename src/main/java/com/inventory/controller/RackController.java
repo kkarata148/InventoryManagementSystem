@@ -21,7 +21,7 @@ public class RackController {
     public String showRackVisualization(Model model) {
         List<Rack> racks = rackService.findAllRacks();
         for (Rack rack : racks) {
-            System.out.println("Rack: " + rack.getName() + ", Products: " + rack.getProducts().size());
+            System.out.println("Rack: " + rack.getName() + ", Products: " + rack.getProductRacks().size());
         }
         model.addAttribute("racks", racks);
         return "inventory/rack-visualization";
