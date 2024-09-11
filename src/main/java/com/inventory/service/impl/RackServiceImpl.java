@@ -21,7 +21,7 @@ public class RackServiceImpl implements RackService {
     public List<Rack> findAllRacks() {
         List<Rack> racks = rackRepository.findAll();
         for (Rack rack : racks) {
-            Hibernate.initialize(rack.getProducts()); // Explicitly initialize products collection
+            Hibernate.initialize(rack.getProductRacks()); // Explicitly initialize products collection
         }
         return racks;
     }

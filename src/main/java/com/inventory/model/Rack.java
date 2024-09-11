@@ -21,8 +21,8 @@ public class Rack {
     @Column(nullable = false)
     private int usedCapacity = 0;
 
-    @OneToMany(mappedBy = "rack", fetch = FetchType.LAZY)
-    private List<Product> products = new ArrayList<>(); // Initialize the list
+    @OneToMany(mappedBy = "rack", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductRack> productRacks = new ArrayList<>();
 
     // Getters and Setters
     public Long getId() {
@@ -57,25 +57,17 @@ public class Rack {
         this.usedCapacity = usedCapacity;
     }
 
-    public List<Product> getProducts() {
-        return products;
+    public List<ProductRack> getProductRacks() {
+        return productRacks;
     }
 
-    public void setProducts(List<Product> products) {
-        this.products = products;
+    public void setProductRacks(List<ProductRack> productRacks) {
+        this.productRacks = productRacks;
     }
 
     // Check if the rack has available space
     public boolean hasSpace() {
         return usedCapacity < totalCapacity;
-    }
-
-    // Assign a product to the rack
-    public void assignProduct(Product product) {
-        if (hasSpace()) {
-            products.add(product);
-            usedCapacity++;
-        }
     }
 
     // New method to maintain backward compatibility

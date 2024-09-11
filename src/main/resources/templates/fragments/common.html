@@ -7,8 +7,8 @@
     <th:block th:fragment="head">
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="_csrf" th:content="${_csrf.token}" />
-        <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+<!--        <meta name="_csrf" th:content="${_csrf.token}" />-->
+<!--        <meta name="_csrf_header" th:content="${_csrf.headerName}" />-->
         <link rel="stylesheet" href="/css/bootstrap.min.css"/>
         <link rel="stylesheet" href="/css/navbar.css"/>
         <link rel="stylesheet" type="text/css"
@@ -32,6 +32,7 @@
         <a th:href="@{/statistics}">Reports</a>
         <a th:href="@{/racks/visualization}">Rack Visualization</a>
         <a th:href="@{/racks/add}">Add Rack</a>
+        <a th:href="@{/order/current}">View Order</a>
         <a th:href="@{/user-management}">User Management</a>
         <form id="myLogoutForm" th:action="@{/logout}" th:method="post" class="logout-form">
             <button type="submit" class="logout-button">Logout</button>

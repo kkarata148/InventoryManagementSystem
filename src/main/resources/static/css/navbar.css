@@ -1,4 +1,8 @@
 /* Navbar container */
+body {
+    margin-top: 100px; /* Same as the navbar height */
+}
+
 .navbar {
     display: flex;
     justify-content: space-between; /* Distribute space between title and links */
@@ -45,11 +49,6 @@
 .navbar .links a:hover {
     background-color: rgba(255, 255, 255, 0.2);
     color: #00d1ff; /* Hover effect */
-}
-
-.navbar .links a.active {
-    background-color: #00d1ff;
-    color: #fff; /* Active link style */
 }
 
 /* Style the form like a link */

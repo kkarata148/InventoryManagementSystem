@@ -12,7 +12,6 @@ import java.util.Optional;
 
 @Repository
 public interface RackRepository extends JpaRepository<Rack, Long> {
-    @Query("SELECT r FROM Rack r LEFT JOIN FETCH r.products")
-    List<Rack> findAllWithProducts();
+
 }
 

@@ -18,13 +18,11 @@ import java.util.Map;
 public class StatisticsController {
 
     private final RackService rackService;
-    private final ProductService productService;
     private final OrderService orderService;
 
     @Autowired
-    public StatisticsController(RackService rackService, ProductService productService, OrderService orderService) {
+    public StatisticsController(RackService rackService, OrderService orderService) {
         this.rackService = rackService;
-        this.productService = productService;
         this.orderService = orderService;
     }
 
@@ -35,10 +33,10 @@ public class StatisticsController {
         model.addAttribute("racks", racks);
 
         // Fetch total products and total sold products
-        int totalProducts = productService.getAllProducts().size();
+        int totalQuantity = racks.stream().mapToInt(Rack::getUsedCapacity).sum();
         int totalSold = orderService.getTotalProductsSold();
 
-        model.addAttribute("totalProducts", totalProducts);
+        model.addAttribute("totalProducts", totalQuantity);
         model.addAttribute("totalSold", totalSold);
 
         return "statistics"; // Return the Thymeleaf template
@@ -48,9 +46,15 @@ public class StatisticsController {
     @GetMapping("/statistics/json")
     @ResponseBody
     public Map<String, Object> getStatisticsJson() {
+        List<Rack> racks = rackService.findAllRacks();
+
+        // Fetch total products and total sold products
+        int totalQuantity = racks.stream().mapToInt(Rack::getUsedCapacity).sum();
+        int totalSold = orderService.getTotalProductsSold();
         Map<String, Object> stats = new HashMap<>();
-        stats.put("totalProducts", productService.getAllProducts().size());
-        stats.put("totalSold", orderService.getTotalProductsSold());
+
+        stats.put("totalProducts", totalQuantity);
+        stats.put("totalSold", totalSold);
 
         return stats;
     }

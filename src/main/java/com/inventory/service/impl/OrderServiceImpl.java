@@ -1,11 +1,7 @@
 package com.inventory.service.impl;
 
-import com.inventory.model.Order;
-import com.inventory.model.OrderItem;
-import com.inventory.model.Product;
-import com.inventory.repository.OrderRepository;
-import com.inventory.repository.OrderItemRepository;
-import com.inventory.repository.ProductRepository;
+import com.inventory.model.*;
+import com.inventory.repository.*;
 import com.inventory.service.OrderService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +19,17 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final ProductRepository productRepository;
-
+    private final ProductRackRepository productRackRepository;
+    private final RackRepository rackRepository;
     private Order currentOrder;
 
     @Autowired
-    public OrderServiceImpl(OrderRepository orderRepository, OrderItemRepository orderItemRepository, ProductRepository productRepository) {
+    public OrderServiceImpl(OrderRepository orderRepository, OrderItemRepository orderItemRepository, ProductRepository productRepository, ProductRackRepository productRackRepository, RackRepository rackRepository) {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.productRepository = productRepository;
+        this.productRackRepository = productRackRepository;
+        this.rackRepository = rackRepository;
     }
 
     @Override
@@ -75,13 +74,49 @@ public class OrderServiceImpl implements OrderService {
             if (product.getQuantity() < item.getQuantity()) {
                 throw new IllegalArgumentException("Not enough stock for product: " + product.getName());
             }
+
+            if (!product.getProductRacks().isEmpty()) {
+                handleProductRackPosition(product, item);
+            }
             product.setQuantity(product.getQuantity() - item.getQuantity());
+
             productRepository.save(product);
         }
 
         order.setOrderDate(LocalDateTime.now());
         orderRepository.save(order);
         currentOrder = null; // Clear the current order
+    }
+
+    private void handleProductRackPosition(Product product, OrderItem item) {
+        int quantity = item.getQuantity();
+
+        while (quantity > 0) {
+            List<ProductRack> productRacks = product.getProductRacks();
+            ProductRack lastProductRack = productRacks.getLast();
+            Rack rack = lastProductRack.getRack();
+            List<ProductRack> rackProductRacks = rack.getProductRacks();
+            if (lastProductRack.getLastPosition() > quantity) {
+                if (lastProductRack.getLastPosition() == rack.getUsedCapacity()) {
+                rack.setUsedCapacity(lastProductRack.getLastPosition());
+                }else {
+                    rack.setUsedCapacity(rack.getProductRacks().getLast().getLastPosition() - quantity);
+                }
+                lastProductRack.setLastPosition(lastProductRack.getLastPosition() - quantity);
+                quantity = 0;
+            }else {
+                rack.setUsedCapacity(lastProductRack.getFirstPosition() - 1);
+                quantity = quantity - lastProductRack.getLastPosition();
+                productRacks.remove(lastProductRack);
+                rackProductRacks.remove(lastProductRack);
+                product.setProductRacks(productRacks);
+                rack.setProductRacks(rackProductRacks);
+                this.productRepository.save(product);
+                this.productRackRepository.delete(lastProductRack);
+            }
+
+            this.rackRepository.save(rack);
+        }
     }
 
     @Override
