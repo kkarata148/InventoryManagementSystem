@@ -4,13 +4,11 @@
     <meta charset="UTF-8">
     <title>Add Product</title>
     <link rel="stylesheet" href="/css/product.css">
+    <th:block th:replace="~{fragments/common::head}"></th:block>
 </head>
 <body>
 <div class="navbar">
-    <div class="title">Inventory Management</div>
-    <div class="links">
-        <a th:href="@{/}" class="nav-link">Home</a>
-    </div>
+    <th:block th:replace="~{fragments/common::loggedNav}"></th:block>
 </div>
 <div class="container">
     <h1>Add Product</h1>

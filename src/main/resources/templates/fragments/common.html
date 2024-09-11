@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Coommon tags</title>
+    <th:block th:fragment="head">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="_csrf" th:content="${_csrf.token}" />
+        <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+        <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="/css/navbar.css"/>
+        <link rel="stylesheet" type="text/css"
+              href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+    </th:block>
+</head>
+<body>
+<th:block th:fragment="notLoggedNav">
+    <div class="title">Inventory Management</div>
+    <div class="links">
+        <a th:href="@{/register}">Register</a>
+        <a th:href="@{/login}">Login</a>
+    </div>
+</th:block>
+
+<th:block th:fragment="loggedNav">
+    <div class="title">Inventory Management</div>
+    <div class="links">
+        <a th:href="@{/}">Home</a>
+        <a th:href="@{/products/list}">Inventory</a>
+        <a th:href="@{/statistics}">Reports</a>
+        <a th:href="@{/racks/visualization}">Rack Visualization</a>
+        <a th:href="@{/racks/add}">Add Rack</a>
+        <a th:href="@{/user-management}">User Management</a>
+        <form id="myLogoutForm" th:action="@{/logout}" th:method="post" class="logout-form">
+            <button type="submit" class="logout-button">Logout</button>
+        </form>
+    </div>
+</th:block>
+
+<th:block th:fragment="footer">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js" integrity="sha384-fbbOQedDUMZZ5KreZpsbe1LCZPVmfTnH7ois6mU1QK+m14rQ1l2bGBq41eYeM/fS" crossorigin="anonymous"></script>
+</th:block>
+
+</body>
+</html>

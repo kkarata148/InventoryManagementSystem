@@ -1,5 +1,7 @@
 package com.inventory.controller;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -8,7 +10,12 @@ public class HomeController {
 
     @GetMapping("/")
     public String home() {
-        return "home"; // Ensure you have a corresponding home.html in templates
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();// Ensure you have a corresponding home.html in templates
+        if (!authentication.getName().equals("anonymousUser")) {
+            return "home"; // Redirect to the home page if the user is authenticated
+        }
+
+        return "index";
     }
 
     @GetMapping("/admin")

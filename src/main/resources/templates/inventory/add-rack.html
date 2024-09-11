@@ -2,8 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Add Rack</title>
+    <th:block th:replace="~{fragments/common::head}"></th:block>
 </head>
 <body>
+<div class="navbar">
+    <th:block th:replace="~{fragments/common::loggedNav}"></th:block>
+</div>
 <h1>Add New Rack</h1>
 
 <!-- Form for adding a new rack -->

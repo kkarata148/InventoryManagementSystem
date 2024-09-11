@@ -1,0 +1,120 @@
+/* General body styling */
+body {
+    font-family: 'Arial', sans-serif;
+    background: url('/images/background_2.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* Navbar styling */
+.navbar {
+    display: flex;
+    justify-content: space-between; /* Distributes space between left and right */
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 16px 32px;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Futuristic shadow effect */
+    backdrop-filter: blur(8px); /* Glass effect */
+}
+
+/* Navbar Title */
+.title {
+    font-size: 24px;
+    color: #fff;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-left: 10px;
+}
+
+/* Left side of the navbar */
+.navbar-left {
+    flex-grow: 1; /* Push the right content to the right */
+}
+
+/* Right side of the navbar */
+.navbar-right {
+    display: flex;
+    gap: 20px; /* Space between links */
+}
+
+/* Navbar links */
+.navbar a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 18px;
+    padding: 8px 16px;
+    transition: background-color 0.3s, color 0.3s;
+    border-radius: 4px;
+}
+
+.navbar a:hover {
+    background-color: rgba(255, 255, 255, 0.2); /* Hover effect for futuristic look */
+    color: #00d1ff; /* Futuristic neon color */
+}
+
+/* Active link styling */
+.navbar a.active {
+    text-decoration: underline;
+}
+
+/* Container styling */
+.container {
+    max-width: 1200px;
+    margin: 100px auto 0;
+    padding: 32px;
+    background: rgba(255, 255, 255, 0.85); /* Light background with transparency */
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); /* Subtle shadow for depth */
+}
+
+/* Welcome message */
+.welcome-message h1 {
+    margin: 0 0 32px;
+    font-size: 3rem;
+    color: #333;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4); /* Adding some shadow for futuristic feel */
+}
+
+/* Quick actions */
+.quick-actions {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 32px;
+}
+
+.quick-actions a {
+    padding: 16px 32px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007BFF;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.quick-actions a:hover {
+    background-color: #0056b3;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Shadow effect for hover */
+}
+
+/* Footer styling */
+footer {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}

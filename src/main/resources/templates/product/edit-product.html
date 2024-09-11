@@ -4,16 +4,11 @@
     <meta charset="UTF-8">
     <title>Edit Product</title>
     <link rel="stylesheet" href="/css/product.css">
+    <th:block th:replace="~{fragments/common::head}"></th:block>
 </head>
 <body>
 <div class="navbar">
-    <div class="title">Inventory Management</div>
-    <div class="links">
-        <a th:href="@{/products/list}">Inventory</a>
-        <a th:href="@{/products/add}">Add Product</a>
-        <a th:href="@{/products/sold-products}">Sold Products</a>
-        <a th:href="@{/logout}">Logout</a>
-    </div>
+    <th:block th:replace="~{fragments/common::loggedNav}"></th:block>
 </div>
 <div class="container">
     <h1>Edit Product</h1>

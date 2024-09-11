@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <th:block th:replace="~{fragments/common::head}"></th:block>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 <div class="navbar">
     <div class="title">Inventory Management</div>
     <div class="links">
-        <a th:href="@{/register}">Register</a>
-        <a th:href="@{/login}">Login</a>
+        <th:block th:replace="~{fragments/common::notLoggedNav}"></th:block>
     </div>
 </div>
 <div class="container">
@@ -32,5 +32,6 @@
         </div>
     </form>
 </div>
+<th:block th:replace="~{fragments/common::footer}"></th:block>
 </body>
 </html>

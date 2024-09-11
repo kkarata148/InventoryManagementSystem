@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rack Visualization</title>
+    <th:block th:replace="~{fragments/common::head}"></th:block>
     <link rel="stylesheet" href="/css/racks.css">
 </head>
 <body>
-
+<div class="navbar">
+    <th:block th:replace="~{fragments/common::loggedNav}"></th:block>
+</div>
 <h1>Rack Visualization</h1>
 
 <div class="rack-container">

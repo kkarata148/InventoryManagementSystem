@@ -1,5 +1,6 @@
+/* General body styling */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
     background: url('/images/background_2.jpg') no-repeat center center fixed;
     background-size: cover;
     color: #333;
@@ -7,96 +8,79 @@ body {
     padding: 0;
 }
 
+/* Navbar styling */
 .navbar {
     display: flex;
-    justify-content: flex-start; /* Align items to the start */
+    justify-content: space-between;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.85);
     padding: 16px 32px;
     position: fixed;
     width: 100%;
     top: 0;
     left: 0;
     z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(8px);
 }
 
-.navbar .title {
+.title {
     font-size: 24px;
     color: #fff;
-    margin-right: 2000px; /* Space between title and links */
+    font-weight: bold;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
 }
 
-.navbar .links {
-    display: flex;
-}
-
-.navbar .links a {
-    color: #fff;
-    margin-right: 16px; /* Space between links */
-    text-decoration: none;
-    font-size: 18px;
-}
-
-.navbar .links a:last-child {
-    margin-right: 0; /* No margin after the last link */
-}
-
-.navbar .links a.active {
-    text-decoration: underline;
-}
-
+/* Container styling */
 .container {
     max-width: 1200px;
-    margin: 100px auto 0;
+    margin: 120px auto 0;
     padding: 32px;
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.85);
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    text-align: center;
 }
 
+/* Welcome message */
 .welcome-message h1 {
-    margin: 0 0 32px;
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    color: #333;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
+/* Quick actions */
 .quick-actions {
     display: flex;
     justify-content: space-around;
-    margin-bottom: 32px;
+    flex-wrap: wrap;
+    margin-top: 30px;
 }
 
-.quick-actions button {
+.action-btn {
     padding: 16px 32px;
     font-size: 18px;
+    background-color: #007BFF;
+    color: white;
     border: none;
     border-radius: 5px;
-    background-color: #007BFF;
-    color: #fff;
     cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.quick-actions button:hover {
-    background-color: #0056b3;
-}
-
-.statistics {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-}
-
-.statistics .statistic {
+    transition: background-color 0.3s, box-shadow 0.3s;
     display: flex;
     align-items: center;
-    margin-bottom: 16px;
 }
 
-.statistics .statistic i {
-    font-size: 32px;
-    margin-right: 8px;
+.action-btn i {
+    margin-right: 10px;
 }
 
-.statistics .statistic p {
-    margin: 0;
-    font-size: 20px;
+.action-btn:hover {
+    background-color: #0056b3;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.action-btn:active {
+    background-color: #004494;
 }

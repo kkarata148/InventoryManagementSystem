@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Return Admin panel</title>
+    <th:block th:replace="~{fragments/common::head}"></th:block>
+    <link rel="stylesheet" href="/css/index.css">
+</head>
+<body>
+<div class="banner">
+    <th:block th:replace="~{fragments/common::notLoggedNav}"></th:block>
+</div>
+
+<div class="container">
+    <div class="welcome-message">
+        <h1>Welcome, Guest!</h1>
+    </div>
+    <div class="quick-actions">
+        <a href="/register"><p>If you are new click here to Register!</p></a>
+        <a href="/login"><p>Already have an account?</p></a>
+    </div>
+</div>
+<th:block th:replace="~{fragments/common::footer}"></th:block>
+</body>
+</html>

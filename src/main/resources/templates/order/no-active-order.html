@@ -3,8 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>No Active Order</title>
+    <th:block th:replace="~{fragments/common::head}"></th:block>
 </head>
 <body>
+<div class="navbar">
+    <th:block th:replace="~{fragments/common::loggedNav}"></th:block>
+</div>
 <div class="container">
     <h1>No Active Order</h1>
     <p>No active order found. Please create an order first.</p>

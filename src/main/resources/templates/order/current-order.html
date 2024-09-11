@@ -4,8 +4,12 @@
     <meta charset="UTF-8">
     <title>Current Order</title>
     <link rel="stylesheet" href="/css/order.css">
+    <th:block th:replace="~{fragments/common::head}"></th:block>
 </head>
 <body>
+<div class="navbar">
+    <th:block th:replace="~{fragments/common::loggedNav}"></th:block>
+</div>
 <div class="container">
     <h1>Current Order</h1>
     <div th:if="${order != null}">

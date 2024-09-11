@@ -5,11 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventory Statistics</title>
     <link rel="stylesheet" href="/css/statistics.css">
+    <th:block th:replace="~{fragments/common::head}"></th:block>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js for graphs -->
     <script src="/js/statistics.js"></script>
 </head>
 <body>
-
+<div class="navbar">
+    <th:block th:replace="~{fragments/common::loggedNav}"></th:block>
+</div>
 <h1>Inventory Statistics</h1>
 
 <div class="statistics-container">

@@ -4,19 +4,12 @@
     <meta charset="UTF-8">
     <title>Product Inventory</title>
     <link rel="stylesheet" href="/css/inventory.css">
+    <th:block th:replace="~{fragments/common::head}"></th:block>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
 <div class="navbar">
-    <div class="title">Inventory Management</div>
-    <div class="links">
-        <a th:href="@{/products/list}" class="active">Inventory</a>
-        <a th:href="@{/products/add}">Add Product</a>
-        <a th:href="@{/products/sold-products}">Sold Products</a>
-        <a th:href="@{/racks/visualization}">Rack Visualization</a>
-        <a th:href="@{/order/current}" class="btn btn-primary">View Order</a>
-        <a th:href="@{/logout}">Logout</a>
-    </div>
+    <th:block th:replace="~{fragments/common::loggedNav}"></th:block>
 </div>
 <div class="container">
     <h1>Product Inventory</h1>

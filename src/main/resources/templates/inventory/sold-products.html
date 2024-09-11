@@ -3,17 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Sold Products</title>
+    <th:block th:replace="~{fragments/common::head}"></th:block>
     <link rel="stylesheet" href="/css/inventory.css">
 </head>
 <body>
 <div class="navbar">
-    <div class="title">Inventory Management</div>
-    <div class="links">
-        <a th:href="@{/products/list}">Inventory</a>
-        <a th:href="@{/products/add}">Add Product</a>
-        <a th:href="@{/products/sold-products}" class="active">Sold Products</a>
-        <a th:href="@{/logout}">Logout</a>
-    </div>
+    <th:block th:replace="~{fragments/common::loggedNav}"></th:block>
 </div>
 <div class="container">
     <h1>Sold Products</h1>
