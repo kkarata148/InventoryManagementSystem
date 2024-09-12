@@ -22,6 +22,9 @@ public class Order {
     @Column(nullable = false)
     private LocalDateTime orderDate;
 
+    @Column
+    private Boolean isActive;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<OrderItem> items = new ArrayList<>();
@@ -35,10 +38,19 @@ public class Order {
     public Order(String company, LocalDateTime orderDate) {
         this.company = company;
         this.orderDate = orderDate;
-        this.items = new ArrayList<>(); // Initialize the list
+        this.items = new ArrayList<>();
     }
 
     // Getters and setters...
+
+
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
+
+    public Boolean getActive() {
+        return isActive;
+    }
 
     public Long getId() {
         return id;

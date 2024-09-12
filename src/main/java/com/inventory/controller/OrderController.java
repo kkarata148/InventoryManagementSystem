@@ -2,6 +2,7 @@ package com.inventory.controller;
 
 import com.inventory.model.Order;
 import com.inventory.model.OrderItem;
+import com.inventory.model.dto.OrderDTO;
 import com.inventory.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import java.time.LocalDateTime;  // For LocalDateTime
+import java.util.HashMap;
 import java.util.Map;            // For Map
 
 
@@ -55,9 +57,13 @@ public class OrderController {
     public ResponseEntity<?> getCurrentOrderJson() {
         Order currentOrder = orderService.getCurrentOrder();
         if (currentOrder == null) {
-            return ResponseEntity.status(404).body("{\"error\":\"No active order. Please create an order first.\"}");
+            // Return proper JSON response for 404 (Not Found)
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", "No active order. Please create an order first.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
         }
-        return ResponseEntity.ok(currentOrder);
+        OrderDTO orderDTO = OrderDTO.fromEntity(currentOrder);
+        return ResponseEntity.ok(orderDTO);
     }
 
     @PostMapping("/create")
@@ -87,7 +93,7 @@ public class OrderController {
         if (order == null) {
             return ResponseEntity.status(404).body("{\"error\":\"Order not found.\"}");
         }
-        orderService.addItemToOrder(order.getId(), productId, quantity);
+        Order orderCreated = orderService.addItemToOrder(order.getId(), productId, quantity);
         return ResponseEntity.ok("{\"success\":\"Product added to order.\"}");
     }
 

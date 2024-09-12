@@ -12,6 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface RackRepository extends JpaRepository<Rack, Long> {
-
+    @Query("SELECT r FROM Rack r WHERE r.totalCapacity > r.usedCapacity ORDER BY r.id ASC")
+    List<Rack> findAllWithFreeSpace();
 }
 
