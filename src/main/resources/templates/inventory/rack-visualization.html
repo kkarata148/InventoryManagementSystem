@@ -16,13 +16,15 @@
 <div class="rack-container">
     <div class="rack" th:each="rack : ${racks}">
         <h2 th:text="${rack.name}">Rack Name</h2>
+        <h4 th:text="|Rack capacity: ${rack.totalCapacity}|"></h4>
         <ul class="product-list">
             <li th:each="productRack : ${rack.productRacks}">
                 <div class="product-details">
                     <strong>Product Name:</strong> <span th:text="${productRack.product.name}">Product Name</span><br>
                     <strong>SKU:</strong> <span th:text="${productRack.product.sku}">Product SKU</span><br>
                     <strong>Quantity:</strong> <span th:text="${productRack.product.quantity}">Quantity</span><br>
-                    <strong>Position:</strong> <span th:text="|${productRack.firstPosition} - ${productRack.lastPosition}|">Position on Rack</span>
+                    <strong>Position:</strong>
+                    <span th:text="${productRack.firstPosition == productRack.lastPosition} ? ${productRack.firstPosition} : ${productRack.firstPosition} + ' - ' + ${productRack.lastPosition}">Position on Rack</span>
                 </div>
             </li>
         </ul>

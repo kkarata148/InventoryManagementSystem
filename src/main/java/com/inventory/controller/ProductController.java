@@ -59,7 +59,7 @@ public class ProductController {
 
     @GetMapping("/list")
     public String showInventory(Model model) {
-        List<Product> products = productService.getAllProducts();
+        List<Product> products = productService.getAllAvailableProducts();
         model.addAttribute("products", products);
         return "inventory/list";
     }

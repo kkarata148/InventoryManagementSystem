@@ -8,19 +8,16 @@ import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.exceptions.CsvValidationException;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Optional;
+import java.util.*;
 
-import java.util.Arrays;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -30,18 +27,19 @@ public class ProductServiceImpl implements ProductService {
     private final SoldProductRepository soldProductRepository;
     private final RackRepository rackRepository;
     private final ProductRackRepository productRackRepository;
+    private final RackGapRepository rackGapRepository;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository,
-                              SoldProductRepository soldProductRepository, RackRepository rackRepository, ProductRackRepository productRackRepository) {
+    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository, SoldProductRepository soldProductRepository, RackRepository rackRepository, ProductRackRepository productRackRepository, RackGapRepository rackGapRepository) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.soldProductRepository = soldProductRepository;
         this.rackRepository = rackRepository;
         this.productRackRepository = productRackRepository;
+        this.rackGapRepository = rackGapRepository;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Product addProduct(ProductDTO productDTO) {
         // Generate a unique SKU for the product
@@ -63,8 +61,7 @@ public class ProductServiceImpl implements ProductService {
         product.setPrice(productDTO.getPrice());
 
         // Retrieve and set the category
-        Category category = categoryRepository.findById(productDTO.getCategoryId())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid category ID"));
+        Category category = categoryRepository.findById(productDTO.getCategoryId()).orElseThrow(() -> new IllegalArgumentException("Invalid category ID"));
         product.setCategory(category);
 
         // Add product to the rack
@@ -75,13 +72,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
 
-
     @Override
+    @Transactional
     public void addProductsFromCSV(MultipartFile file) throws IOException {
-        try (CSVReader reader = new CSVReaderBuilder(new InputStreamReader(file.getInputStream()))
-                .withSkipLines(1)
-                .withCSVParser(new CSVParserBuilder().withSeparator(';').build())
-                .build()) {
+        try (CSVReader reader = new CSVReaderBuilder(new InputStreamReader(file.getInputStream())).withSkipLines(1).withCSVParser(new CSVParserBuilder().withSeparator(';').build()).build()) {
             String[] line;
             while ((line = reader.readNext()) != null) {
                 if (line.length < 7) {
@@ -112,8 +106,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product updateProduct(Long id, ProductDTO productDTO) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid product ID"));
+        Product product = productRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid product ID"));
         product.setSku(productDTO.getSku());
         product.setName(productDTO.getName());
         product.setDescription(productDTO.getDescription());
@@ -121,8 +114,7 @@ public class ProductServiceImpl implements ProductService {
         product.setStatus(productDTO.getQuantity() > 0 ? "Available" : "Out of Stock");
         product.setPrice(productDTO.getPrice());
 
-        Category category = categoryRepository.findById(productDTO.getCategoryId())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid category ID"));
+        Category category = categoryRepository.findById(productDTO.getCategoryId()).orElseThrow(() -> new IllegalArgumentException("Invalid category ID"));
         product.setCategory(category);
 
         return productRepository.save(product);
@@ -144,8 +136,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product getProductById(Long id) {
-        return productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid product ID"));
+        return productRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid product ID"));
     }
 
     @Override
@@ -188,31 +179,92 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void addProductToRack(Product product) {
-        List<Rack> racks = rackRepository.findAll(); // Fetches racks with products eagerly
-        List<ProductRack> productRacks = new ArrayList<>();
-        for (Rack rack : racks) {
-            if (rack.hasSpace()) {
-                int currentSpace = rack.getTotalCapacity() - rack.getUsedCapacity();
-                if (currentSpace >= product.getQuantity()) {
-                    productRacks.add(handleRackProduct(rack, product));
-                    break;
-                }else {
-
-                }
-
-            }
+        List<Rack> availableRacks = rackRepository.findAllWithFreeSpace(); // Fetches racks with products eagerly
+        int remainingQuantity = product.getQuantity();
+        if (product.getSku() != null) {
+            this.productRepository.save(product);
         }
-        this.productRepository.save(product);
-        this.productRackRepository.saveAll(productRacks);
+        try {
+
+            for (Rack rack : availableRacks) {
+                if (remainingQuantity == 0) break;
+
+                if (rack.isEmpty()) {
+                    remainingQuantity = addInEmptyRack(product, rack, remainingQuantity);
+                } else {
+                    remainingQuantity = addInGapsOfRack(product, rack, remainingQuantity);
+
+                    remainingQuantity = addAsLastAtRack(product, rack, remainingQuantity);
+                }
+                this.rackRepository.save(rack);
+            }
+
+            if (remainingQuantity > 0) {
+                throw new IllegalArgumentException("Not enough space in available racks to store the entire product.");
+            }
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
-    private ProductRack handleRackProduct(Rack rack, Product product) {
-        ProductRack productRack = new ProductRack(product, rack, rack.getUsedCapacity() + 1, rack.getUsedCapacity() + product.getQuantity());
-        rack.setUsedCapacity(rack.getUsedCapacity() + product.getQuantity());
-        this.rackRepository.save(rack);
-        return productRack;
+    private int addInEmptyRack(Product product, Rack rack, int remainingQuantity) {
+        int quantityToAssign = Math.min(remainingQuantity, rack.getTotalCapacity());
+        ProductRack productRack = new ProductRack(product, rack, 1, quantityToAssign);
+        this.productRackRepository.save(productRack);
+
+        rack.setUsedCapacity(quantityToAssign);
+        remainingQuantity -= quantityToAssign;
+        return remainingQuantity;
+    }
+
+    private int addInGapsOfRack(Product product, Rack rack, int remainingQuantity) {
+        Iterator<RackGap> gaps = rack.getGaps().iterator();
+        while (gaps.hasNext()) {
+            RackGap gap = gaps.next();
+            if (remainingQuantity == 0) break;
+
+            int gapSize = gap.getEndPosition() - gap.getStartPosition() + 1;
+            int quantityToAssign = Math.min(remainingQuantity, gapSize);
+
+            int start = gap.getStartPosition();
+            int end = start + quantityToAssign - 1;
+
+            // Create and save the ProductRack entry for the assigned quantity
+            ProductRack productRack = new ProductRack(product, rack, start, end);
+            this.productRackRepository.save(productRack);
+
+            // Update the used capacity of the rack
+            rack.setUsedCapacity(rack.getUsedCapacity() + quantityToAssign);
+            remainingQuantity -= quantityToAssign;
+
+            // If the gap is fully filled, remove the gap
+            if (quantityToAssign == gapSize) {
+                gaps.remove();
+            } else {
+                // Adjust the gap start position to reflect the newly assigned space
+                gap.setStartPosition(end + 1);
+            }
+        }
+
+        return remainingQuantity;
+    }
+
+    private int addAsLastAtRack(Product product, Rack rack, int remainingQuantity) {
+        int freeCapacity = rack.getTotalCapacity() - rack.getUsedCapacity();
+        if (freeCapacity > 0 && remainingQuantity > 0) {
+            int quantityToAssign = Math.min(remainingQuantity, freeCapacity);
+            int start = rack.getUsedCapacity() + 1;
+            int end = start + quantityToAssign - 1;
+
+            ProductRack productRack = new ProductRack(product, rack, start, end);
+            this.productRackRepository.save(productRack);
+
+            rack.setUsedCapacity(rack.getUsedCapacity() + quantityToAssign);
+            remainingQuantity -= quantityToAssign;
+        }
+        return remainingQuantity;
     }
 
     public class DuplicateSKUException extends RuntimeException {
@@ -237,8 +289,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public int getTotalSoldProducts() {
-        return soldProductRepository.findAll().stream()
-                .mapToInt(SoldProduct::getQuantity)
-                .sum();
+        return soldProductRepository.findAll().stream().mapToInt(SoldProduct::getQuantity).sum();
+    }
+
+    @Override
+    public List<Product> getAllAvailableProducts() {
+        return this.productRepository.findAllByQuantityGreaterThan(0);
     }
 }

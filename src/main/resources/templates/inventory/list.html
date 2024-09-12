@@ -55,91 +55,175 @@
 <script>
     let currentOrderId = null;
 
-   function addToOrder(button) {
+   async function addToOrder(button) {
        const productId = button.getAttribute('data-product-id');
+       try {
+           const response = await fetch('/order/json', {
+               method: 'GET',
+               headers: {
+                   'Content-Type': 'application/json',
+                   'Accept': 'application/json'
+               }
+           });
 
-       // Check if there's an active order
-       if (!currentOrderId) {
-           // Fetch the current order from the server
-           fetch('/order/json', { method: 'GET' })
-               .then(response => {
-                   if (!response.ok) {
-                       throw new Error("No active order");
-                   }
-                   return response.json();
-               })
-               .then(orderData => {
-                   if (orderData.id) {
-                       // Active order found, store the order ID
-                       currentOrderId = orderData.id;
-                       addProductToOrder(currentOrderId, productId);
-                   } else {
-                       // No active order found, create a new order
-                       createOrderAndAddProduct(productId);
-                   }
-               })
-               .catch(error => {
-                   console.error('No active order found. Creating new order.');
-                   createOrderAndAddProduct(productId);  // Create new order if no active one found
-               });
-       } else {
-           // Add product to existing order
-           addProductToOrder(currentOrderId, productId);
-       }
-   }
-
-   function createOrderAndAddProduct(productId) {
-       const companyName = prompt("Enter the company name:");
-       const orderDate = new Date().toISOString(); // Send current date as orderDate in ISO format
-
-       // Create a new order via POST request with company name and order date
-       fetch('/order/create', {
-           method: 'POST',
-           headers: { 'Content-Type': 'application/json' },
-           body: JSON.stringify({ company: companyName, orderDate: orderDate }) // Send company and orderDate in the body
-       })
-       .then(response => response.json())
-       .then(orderData => {
-           if (orderData.id) {
-               currentOrderId = orderData.id; // Store the order ID
+           if (response.ok) {
+               const responseData = await response.json();
+               currentOrderId = responseData.id;
                addProductToOrder(currentOrderId, productId);
            } else {
-               throw new Error('Failed to create order.');
+               createOrderAndAddProduct(productId);
            }
-       })
-       .catch(error => {
-           console.error('Failed to create order:', error);
-           alert('Failed to create order. Please try again.');
-       });
+       }catch (error) {
+           console.error(error);
+       }
+
+       // Check if there's an active order
+       // if (!currentOrderId) {
+           // Fetch the current order from the server
+           // fetch('/order/json', { method: 'GET' })
+           //     .then(response => {
+           //         console.log(response);
+           //         if (!response.ok) {
+           //             throw new Error("No active order");
+           //         }
+           //         return response.json();
+           //     })
+           //     .then(orderData => {
+           //         if (orderData.id) {
+           //             // Active order found, store the order ID
+           //             currentOrderId = orderData.id;
+           //             addProductToOrder(currentOrderId, productId);
+           //         } else {
+           //             // No active order found, create a new order
+           //             createOrderAndAddProduct(productId);
+           //         }
+           //     })
+           //     .catch(error => {
+           //         console.error('No active order found. Creating new order.');
+           //         createOrderAndAddProduct(productId);  // Create new order if no active one found
+           //     });
+       // } else {
+           // Add product to existing order
+           // addProductToOrder(currentOrderId, productId);
+       // }
    }
 
-   function addProductToOrder(orderId, productId) {
-    // Send the productId and quantity as form data (URL-encoded)
-    const formData = new URLSearchParams();
-    formData.append("productId", productId);
-    formData.append("quantity", 1); // Defaulting to 1 quantity for this example
+    async function createOrderAndAddProduct(productId) {
+        try {
+            const companyName = prompt("Enter the company name:");
+            if (companyName === null || companyName.trim() === "") {
+                return; // Exit if no valid company name is provided
+            }
 
-    fetch(`/order/${orderId}/add-to-order`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, // Send as form data
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Product added to order.');
-        } else {
-            console.error('Failed to add product to order:', data.error);
+            const orderDate = new Date().toISOString(); // Send current date as orderDate in ISO format
+
+            // Create a new order via POST request with company name and order date
+            const response = await fetch('/order/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ company: companyName, orderDate: orderDate }) // Send company and orderDate in the body
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to create order. Status code: ${response.status}`);
+            }
+
+            const orderData = await response.json();
+            if (orderData.id) {
+                const currentOrderId = orderData.id; // Store the order ID
+                await addProductToOrder(currentOrderId, productId); // Add product to the newly created order
+            } else {
+                throw new Error('Failed to create order.');
+            }
+        } catch (error) {
+            console.error('Failed to create order:', error);
+            alert('Failed to create order. Please try again.');
+        }
+    }
+
+    async function addProductToOrder(orderId, productId) {
+        try {
+            // Send the productId and quantity as form data (URL-encoded)
+            const formData = new URLSearchParams();
+            formData.append("productId", productId);
+            formData.append("quantity", 1); // Defaulting to 1 quantity for this example
+
+            const response = await fetch(`/order/${orderId}/add-to-order`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, // Send as form data
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to add product to order. Status code: ${response.status}`);
+            }
+
+            const data = await response.json();
+            if (data.success) {
+                alert('Product added to order.');
+            } else {
+                throw new Error(data.error || 'Failed to add product to order.');
+            }
+        } catch (error) {
+            console.error('Failed to add product to order:', error);
             alert('Failed to add product to order. Please try again.');
         }
-    })
-    .catch(error => {
-        console.error('Failed to add product to order:', error);
-        alert('Failed to add product to order. Please try again.');
-    });
-}
-
-
+    }
+//    function createOrderAndAddProduct(productId) {
+//        const companyName = prompt("Enter the company name:");
+//        const orderDate = new Date().toISOString(); // Send current date as orderDate in ISO format
+//        if (companyName == null ) {
+//            return;
+//        }
+//        if (companyName.trim() === ""){
+//            return;
+//        }
+//        // Create a new order via POST request with company name and order date
+//        fetch('/order/create', {
+//            method: 'POST',
+//            headers: { 'Content-Type': 'application/json' },
+//            body: JSON.stringify({ company: companyName, orderDate: orderDate }) // Send company and orderDate in the body
+//        })
+//        .then(response => response.json())
+//        .then(orderData => {
+//            if (orderData.id) {
+//                currentOrderId = orderData.id; // Store the order ID
+//                addProductToOrder(currentOrderId, productId);
+//            } else {
+//                throw new Error('Failed to create order.');
+//            }
+//        })
+//        .catch(error => {
+//            console.error('Failed to create order:', error);
+//            alert('Failed to create order. Please try again.');
+//        });
+//    }
+//
+//    function addProductToOrder(orderId, productId) {
+//     // Send the productId and quantity as form data (URL-encoded)
+//     const formData = new URLSearchParams();
+//     formData.append("productId", productId);
+//     formData.append("quantity", 1); // Defaulting to 1 quantity for this example
+//
+//     fetch(`/order/${orderId}/add-to-order`, {
+//         method: 'POST',
+//         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, // Send as form data
+//         body: formData
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//         if (data.success) {
+//             alert('Product added to order.');
+//         } else {
+//             console.error('Failed to add product to order:', data.error);
+//             alert('Failed to add product to order. Please try again.');
+//         }
+//     })
+//     .catch(error => {
+//         console.error('Failed to add product to order:', error);
+//         alert('Failed to add product to order. Please try again.');
+//     });
+// }
 </script>
 
 </body>

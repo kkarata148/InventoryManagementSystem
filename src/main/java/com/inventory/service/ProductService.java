@@ -31,4 +31,6 @@ public interface ProductService {
     int getTotalProductCount();
 
     int getTotalSoldProducts();
+
+    List<Product> getAllAvailableProducts();
 }
