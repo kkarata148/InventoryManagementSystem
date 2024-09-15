@@ -10,8 +10,12 @@
     <link rel="stylesheet" href="/css/index.css">
 </head>
 <body>
-<div class="banner">
-    <th:block th:replace="~{fragments/common::notLoggedNav}"></th:block>
+<div class="navbar">
+    <div class="title">Inventory Management</div>
+    <div class="links">
+        <a th:href="@{/register}">Register</a>
+        <a th:href="@{/login}">Login</a>
+    </div>
 </div>
 
 <div class="container">
