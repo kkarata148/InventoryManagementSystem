@@ -6,37 +6,6 @@ body {
     padding: 0;
 }
 
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    position: fixed;
-    width: 100%;
-    top: 0;
-    z-index: 1;
-}
-
-.navbar .title {
-    font-size: 24px;
-    font-weight: bold;
-}
-
-.navbar .links {
-    display: flex;
-    margin-left: auto;
-    margin-right: 60px; /* Adjust this value to move links to the left */
-}
-
-.navbar .links a {
-    color: yellow;
-    margin-left: 40px; /* Adjust this value for spacing between links */
-    text-decoration: none;
-    font-size: 18px;
-}
-
 .container {
     display: flex;
     justify-content: center;

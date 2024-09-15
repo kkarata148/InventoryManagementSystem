@@ -13,7 +13,7 @@ h1 {
 }
 
 /* Form Container */
-form {
+.add-rack {
     background-color: #fff;
     border: 2px solid #ddd;
     border-radius: 8px;
@@ -24,7 +24,7 @@ form {
 }
 
 /* Form Labels */
-form label {
+.add-rack label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
@@ -32,8 +32,8 @@ form label {
 }
 
 /* Form Inputs */
-form input[type="text"],
-form input[type="number"] {
+#rackName,
+#totalCapacity {
     width: 100%;
     padding: 8px;
     margin-bottom: 15px;
@@ -43,7 +43,7 @@ form input[type="number"] {
 }
 
 /* Submit Button */
-button {
+.add-rack-button {
     width: 100%;
     padding: 10px;
     background-color: #007bff;

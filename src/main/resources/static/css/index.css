@@ -81,6 +81,7 @@ body {
     font-size: 3rem;
     color: #333;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4); /* Adding some shadow for futuristic feel */
+    text-align: center;
 }
 
 /* Quick actions */
